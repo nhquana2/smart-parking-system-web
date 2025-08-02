@@ -47,6 +47,7 @@ You are coding a smart parking system web (frontend + backend) for an IoT projec
 -   Do not use Redux, it is overkill
 -   Use React Router
 -   Keep everything up-to-date, consistent, do web-search for documentation if needed
+-   Make the UI responsive
 -   Use latest stable version, but still ensure compatibility
 -   Frontend architecture please keep it simple, clean and easily maintainable.
 
