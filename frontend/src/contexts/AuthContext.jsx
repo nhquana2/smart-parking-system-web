@@ -1,5 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 const AuthContext = createContext();
 
@@ -22,6 +23,10 @@ export function AuthProvider({ children }) {
             setToken(data.idToken);
             localStorage.setItem("token", data.idToken);
             setUser({ email: data.email, uid: data.localId });
+        },
+        onError: (error) => {
+            console.error("Login error:", error);
+            toast.error("Đăng nhập không thành công. Vui lòng kiểm tra lại email và mật khẩu.");
         },
     });
 

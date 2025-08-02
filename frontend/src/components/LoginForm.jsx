@@ -36,7 +36,6 @@ export function LoginForm({ email, password, setEmail, setPassword, onSubmit, is
                     {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
                 </Button>
             </div>
-            {isError && <div className="text-red-500 text-center">Đăng nhập không thành công</div>}
             <div className="text-center text-sm">
                 Chưa có tài khoản?{" "}
                 <a href="#" className="underline underline-offset-4">
