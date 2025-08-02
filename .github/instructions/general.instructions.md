@@ -1,3 +1,7 @@
+---
+applyTo: "**"
+---
+
 ## Summary
 
 You are coding a smart parking system web (frontend + backend) for an IoT project that has this flow:
@@ -30,10 +34,12 @@ You are coding a smart parking system web (frontend + backend) for an IoT projec
 -   DB schema will be provided for you, if not, please ask or clarify when I forget or provide missing information
 -   For authentication, I'm using Firebase Auth, keep it simple using token-based authentication for endpoints, use built-in FastAPI (e.g Depends) where applicable.
 -   Use routers for API endpoints
+-   Keep the codebase structure modular, with separate files for models, routers, utils, etc.
 
 # Frontend
 
--   Employs a dashboard for manager of the parking system, with navbar on the left), with login and permission checking
+-   Employs a dashboard for manager of the parking system, with navbar on the left, with login and permission checking
+-   Use Vite as the build tool
 -   Main color: Blue
 -   Uses React
 -   For styling, use TailwindCSS (and also shacdn/ui if necessary)

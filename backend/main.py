@@ -1,9 +1,11 @@
 
 from fastapi import FastAPI
-from routers import auth
+from routers import auth, rfid, vehicle
 
 app = FastAPI()
 app.include_router(auth.router)
+app.include_router(rfid.router)
+app.include_router(vehicle.router)
 
 @app.get("/")
 def read_root():

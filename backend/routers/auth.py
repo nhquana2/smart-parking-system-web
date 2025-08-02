@@ -1,20 +1,9 @@
 from fastapi import APIRouter, HTTPException, status, Request
 from models.user import SignUpRequest, SignInRequest
-import os
-from dotenv import load_dotenv
-import firebase_admin
-from firebase_admin import auth as firebase_auth, credentials
+
 import requests
-
-# Initialize Firebase Admin SDK
-load_dotenv()
-FIREBASE_CRED_PATH = os.getenv("FIREBASE_CRED_PATH", "firebase-service-account.json")
-
-try:
-    firebase_admin.get_app()
-except ValueError:
-    cred = credentials.Certificate(FIREBASE_CRED_PATH)
-    firebase_admin.initialize_app(cred)
+from utils.firebase import *
+from firebase_admin import auth as firebase_auth
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 @router.post("/signup")
