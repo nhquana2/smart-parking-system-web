@@ -4,7 +4,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import { Toaster } from "@/components/ui/sonner";
-import PublicRoute from "./components/PublicRoute";
+import AuthRoute from "./components/AuthRoute";
 
 export default function App() {
     return (
@@ -15,9 +15,9 @@ export default function App() {
                     <Route
                         path="/login"
                         element={
-                            <PublicRoute>
+                            <AuthRoute>
                                 <Login />
-                            </PublicRoute>
+                            </AuthRoute>
                         }
                     />
                     <Route
