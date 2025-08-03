@@ -1,5 +1,5 @@
 import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
-
+import { NavLink, useLocation } from "react-router-dom";
 import {
     Sidebar,
     SidebarContent,
@@ -14,22 +14,22 @@ import {
 // Menu items.
 const items = [
     {
-        title: "Home",
-        url: "#",
+        title: "Tổng quan",
+        url: "/dashboard",
         icon: Home,
     },
     {
-        title: "Inbox",
-        url: "#",
+        title: "Quản lý thẻ RFID",
+        url: "/inbox",
         icon: Inbox,
     },
     {
-        title: "Calendar",
+        title: "Quản lý xe",
         url: "#",
         icon: Calendar,
     },
     {
-        title: "Search",
+        title: "Log hệ thống",
         url: "#",
         icon: Search,
     },
@@ -41,23 +41,27 @@ const items = [
 ];
 
 export function AppSidebar() {
+    const location = useLocation();
     return (
         <Sidebar collapsible="offcanvas" variant="inset">
             <SidebarContent>
                 <SidebarGroup>
-                    <SidebarGroupLabel>Application</SidebarGroupLabel>
+                    <SidebarGroupLabel>Quản lý bãi xe</SidebarGroupLabel>
                     <SidebarGroupContent>
                         <SidebarMenu>
-                            {items.map((item) => (
-                                <SidebarMenuItem key={item.title}>
-                                    <SidebarMenuButton asChild>
-                                        <a href={item.url}>
-                                            <item.icon />
-                                            <span>{item.title}</span>
-                                        </a>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            ))}
+                            {items.map((item) => {
+                                const isActive = location.pathname === item.url;
+                                return (
+                                    <SidebarMenuItem key={item.title}>
+                                        <SidebarMenuButton asChild isActive={isActive}>
+                                            <NavLink to={item.url} end>
+                                                <item.icon />
+                                                <span>{item.title}</span>
+                                            </NavLink>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
+                                );
+                            })}
                         </SidebarMenu>
                     </SidebarGroupContent>
                 </SidebarGroup>
