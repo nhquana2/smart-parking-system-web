@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, UploadFile, HTTPException
+from fastapi import APIRouter, File, UploadFile, HTTPException, Body
 from models.plate_recognition import OCRResponse
 import numpy as np
 import cv2
@@ -18,13 +18,16 @@ except Exception as e:
 print("All models are ready!")
 
 @router.post("/recognize", response_model=OCRResponse, summary="Recognize License Plate from an Image")
-async def recognize_license_plate(file: UploadFile = File(..., description="The image file to be processed.")):
+async def recognize_license_plate(
+    data: bytes = Body(..., media_type="image/jpeg")
+):
     if alpr is None:
         raise HTTPException(status_code=503, detail="Service Unavailable: The ALPR model is not loaded.")
-    if not file.content_type.startswith("image/"):
-        raise HTTPException(status_code=415, detail="Error: The uploaded file must be an image.")
     try:
-        img_bytes = await file.read()
+        img_bytes = data
+        # Save raw image data for debugging
+        with open("debug_raw_image.jpg", "wb") as f:
+            f.write(img_bytes)
         img_array = np.frombuffer(img_bytes, np.uint8)
         img_bgr = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
         if img_bgr is None:
@@ -34,7 +37,8 @@ async def recognize_license_plate(file: UploadFile = File(..., description="The 
         raise HTTPException(status_code=400, detail=f"Could not read or process the image file. Error: {e}")
     try:
         alpr_results = alpr.predict(img_rgb)
-        plate_strings = [result.ocr.text for result in alpr_results]
+        plate_strings = [result.ocr.text for result in alpr_results if result.ocr.confidence > 0.8]
+        print("ALPR Results:", alpr_results)
     except Exception as e:
         print(f"ERROR: An exception occurred during ALPR recognition: {e}")
         raise HTTPException(status_code=500, detail="An error occurred during the recognition process.")
