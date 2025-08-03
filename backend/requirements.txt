@@ -3,3 +3,7 @@ uvicorn
 firebase-admin
 python-dotenv
 requests
+fast-alpr[onnx]
+numpy
+opencv-python
+python-multipart

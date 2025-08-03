@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { CarFront } from "lucide-react";
@@ -6,7 +7,7 @@ import { LoginForm } from "@/components/LoginForm";
 import { toast } from "sonner";
 
 export default function LoginPage() {
-    const { login, loginMutation } = useAuth();
+    const { token, login, loginMutation } = useAuth();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
@@ -16,9 +17,11 @@ export default function LoginPage() {
         login(email, password);
     };
 
-    if (loginMutation.isSuccess) {
-        navigate("/");
-    }
+    useEffect(() => {
+        if (loginMutation.isSuccess) {
+            navigate("/");
+        }
+    }, [loginMutation.isSuccess, navigate]);
 
     return (
         <div className="grid min-h-screen lg:grid-cols-2">
