@@ -11,14 +11,7 @@ export function AppHeader({ pageName }) {
                 <h1 className="text-base font-medium">{pageName}</h1>
                 <div className="ml-auto flex items-center gap-2">
                     <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-                        <a
-                            href="https://github.com/shadcn-ui/ui/tree/main/apps/v4/app/(examples)/dashboard"
-                            rel="noopener noreferrer"
-                            target="_blank"
-                            className="dark:text-foreground"
-                        >
-                            GitHub
-                        </a>
+                        <span>23CLC01 @ FIT</span>
                     </Button>
                 </div>
             </div>

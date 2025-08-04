@@ -7,6 +7,7 @@ import Login from "./pages/Login";
 import { Toaster } from "@/components/ui/sonner";
 import AuthRoute from "./components/AuthRoute";
 import { Layout } from "./layouts/DashboardLayout";
+import RFID from "./pages/RFID";
 
 export default function App() {
     return (
@@ -33,6 +34,7 @@ export default function App() {
                     >
                         <Route index element={<Navigate to="/dashboard" replace />} />
                         <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="rfid" element={<RFID />} />
                     </Route>
                 </Routes>
             </BrowserRouter>

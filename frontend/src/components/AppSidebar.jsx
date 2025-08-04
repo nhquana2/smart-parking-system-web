@@ -53,7 +53,7 @@ const sidebarSections = [
             },
             {
                 title: "Quản lý thẻ RFID",
-                url: "/inbox",
+                url: "/rfid",
                 icon: CreditCard,
             },
             {
