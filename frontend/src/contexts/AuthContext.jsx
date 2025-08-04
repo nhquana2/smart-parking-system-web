@@ -5,7 +5,10 @@ import { toast } from "sonner";
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const u = localStorage.getItem("user");
+        return u ? JSON.parse(u) : null;
+    });
     const [token, setToken] = useState(localStorage.getItem("token") || null);
 
     const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
@@ -22,7 +25,9 @@ export function AuthProvider({ children }) {
         onSuccess: (data) => {
             setToken(data.idToken);
             localStorage.setItem("token", data.idToken);
-            setUser({ email: data.email, uid: data.localId });
+            const userObj = { email: data.email, uid: data.localId };
+            setUser(userObj);
+            localStorage.setItem("user", JSON.stringify(userObj));
         },
         onError: (error) => {
             console.error("Login error:", error);
@@ -35,6 +40,8 @@ export function AuthProvider({ children }) {
         setToken(null);
         setUser(null);
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        loginMutation.reset(); // Must clear, avoid Login component navigating to dashboard
     };
 
     return <AuthContext.Provider value={{ user, token, login, logout, loginMutation }}>{children}</AuthContext.Provider>;
