@@ -38,6 +38,8 @@ You are coding a smart parking system web (frontend + backend) for an IoT projec
 
 # Frontend
 
+-   IMPORTANT: Strictly follow using Shadcn UI components, do not use any other UI libraries or components, except for TailwindCSS. For API handling, use Tanstack Query (React Query) for data fetching, caching, and invalidation.
+-   Have a look at the project structure to make it consistent with the existing code
 -   Employs a dashboard for manager of the parking system, with navbar on the left, with login and permission checking
 -   Use Vite as the build tool
 -   Main color: Blue

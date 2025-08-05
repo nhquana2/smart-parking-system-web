@@ -10,16 +10,13 @@ router = APIRouter(prefix="/vehicles", tags=["vehicles"])
 @router.get("/", response_model=List[VehicleDocument])
 def list_vehicles(
     user=Depends(verify_token),
-    status: Optional[str] = None,
-    limit: int = 20,
-    offset: int = 0
+    status: Optional[str] = None
 ):
     db = firestore.client()
     query = db.collection("vehicles")
     if status:
         query = query.where("status", "==", status)
-    query = query.order_by("timeIn").offset(offset).limit(limit)
-    docs = query.stream()
+    docs = query.order_by("timeIn").stream()
     result = []
     for doc in docs:
         data = doc.to_dict()

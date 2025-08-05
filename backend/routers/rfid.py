@@ -12,13 +12,10 @@ router = APIRouter(prefix="/rfid", tags=["rfid"])
 
 @router.get("/", response_model=List[RFIDDocument])
 def list_rfid(
-    user=Depends(verify_token),
-    limit: int = 20,
-    offset: int = 0
+    user=Depends(verify_token)
 ):
     db = firestore.client()
-    query = db.collection("rfid").order_by("dateAdded").offset(offset).limit(limit)
-    docs = query.stream()
+    docs = db.collection("rfid").order_by("dateAdded").stream()
     result = []
     for doc in docs:
         data = doc.to_dict()

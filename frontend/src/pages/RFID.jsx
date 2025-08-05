@@ -3,21 +3,12 @@ import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import { columns } from "@/components/RFID/columns";
 import { DataTable } from "@/components/DataTable";
-
-function dummyGetData() {
-    // Fetch data from your API here.
-    return [
-        {
-            uid: "728ED52F",
-            balance: 100,
-            dateAdded: "July 31, 2025 at 11:13:05 PM UTC+7",
-            status: "active",
-        },
-    ];
-}
+import { useRfidCards } from "@/queries/rfid";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function RFID() {
-    const data = dummyGetData();
+    const { token } = useAuth();
+    const { data = [], isLoading, error } = useRfidCards(token);
     return (
         <>
             <AppHeader pageName="Quản lý thẻ RFID" />
@@ -35,7 +26,13 @@ export default function RFID() {
                             </Button>
                         </div>
                         <div className="px-4 lg:px-6">
-                            <DataTable columns={columns} data={data} />
+                            {isLoading ? (
+                                <div className="text-center py-8">Đang tải dữ liệu...</div>
+                            ) : error ? (
+                                <div className="text-center py-8 text-red-500">Có lỗi xảy ra khi tải dữ liệu</div>
+                            ) : (
+                                <DataTable columns={columns} data={data} />
+                            )}
                         </div>
                     </div>
                 </div>
