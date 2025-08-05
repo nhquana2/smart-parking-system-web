@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel } from "@tanstack/react-table";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
-import { CirclePlus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { CirclePlus, Search } from "lucide-react";
 import { columns } from "@/components/RFID/columns";
 import { DataTable } from "@/components/DataTable";
 import RfidFormDialog from "@/components/RFID/RfidFormDialog";
@@ -12,6 +14,28 @@ export default function RFID() {
     const { token } = useAuth();
     const { data = [], isLoading, error } = useRfidCards(token);
     const [showAddDialog, setShowAddDialog] = useState(false);
+    const [globalFilter, setGlobalFilter] = useState("");
+
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        globalFilterFn: (row, columnId, filterValue) => {
+            const uid = row.getValue("uid");
+            return uid?.toLowerCase().includes(filterValue.toLowerCase()) ?? false;
+        },
+        state: {
+            globalFilter,
+        },
+        onGlobalFilterChange: setGlobalFilter,
+        initialState: {
+            pagination: {
+                pageSize: 7,
+            },
+        },
+    });
 
     return (
         <>
@@ -29,13 +53,26 @@ export default function RFID() {
                                 Thêm thẻ RFID mới
                             </Button>
                         </div>
+
                         <div className="px-4 lg:px-6">
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="relative flex-1 max-w-sm">
+                                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        placeholder="Tìm kiếm theo UID..."
+                                        value={globalFilter ?? ""}
+                                        onChange={(e) => setGlobalFilter(e.target.value)}
+                                        className="pl-8"
+                                    />
+                                </div>
+                            </div>
+
                             {isLoading ? (
                                 <div className="text-center py-8">Đang tải dữ liệu...</div>
                             ) : error ? (
                                 <div className="text-center py-8 text-red-500">Có lỗi xảy ra khi tải dữ liệu</div>
                             ) : (
-                                <DataTable columns={columns} data={data} />
+                                <DataTable table={table} columns={columns} />
                             )}
                         </div>
                     </div>
