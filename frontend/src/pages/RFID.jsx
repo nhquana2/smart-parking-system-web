@@ -1,14 +1,18 @@
+import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/button";
 import { CirclePlus } from "lucide-react";
 import { columns } from "@/components/RFID/columns";
 import { DataTable } from "@/components/DataTable";
+import RfidFormDialog from "@/components/RFID/RfidFormDialog";
 import { useRfidCards } from "@/queries/rfid";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function RFID() {
     const { token } = useAuth();
     const { data = [], isLoading, error } = useRfidCards(token);
+    const [showAddDialog, setShowAddDialog] = useState(false);
+
     return (
         <>
             <AppHeader pageName="Quản lý thẻ RFID" />
@@ -20,7 +24,7 @@ export default function RFID() {
                                 <h2 className="text-lg font-bold">Quản lý thẻ RFID</h2>
                                 <p className="text-muted-foreground text-sm mt-2">Thêm và quản lý thẻ RFID</p>
                             </div>
-                            <Button>
+                            <Button onClick={() => setShowAddDialog(true)}>
                                 <CirclePlus />
                                 Thêm thẻ RFID mới
                             </Button>
@@ -37,6 +41,8 @@ export default function RFID() {
                     </div>
                 </div>
             </div>
+
+            <RfidFormDialog isOpen={showAddDialog} onClose={() => setShowAddDialog(false)} mode="create" />
         </>
     );
 }

@@ -33,17 +33,40 @@ def get_rfid(uid: str, user=Depends(verify_token)):
 @router.post("/", response_model=RFIDDocument, status_code=201)
 def create_rfid(rfid: RFIDDocument, user=Depends(verify_token)):
     db = firestore.client()
+    
+    # Check if RFID with this UID already exists
+    existing_doc = db.collection("rfid").document(rfid.uid).get()
+    if existing_doc.exists:
+        raise HTTPException(status_code=400, detail="RFID with this UID already exists")
+    
+    # Create the document with server timestamp
+    rfid_data = rfid.model_dump()
+    rfid_data['dateAdded'] = firestore.SERVER_TIMESTAMP
+    
     doc_ref = db.collection("rfid").document(rfid.uid)
-    doc_ref.set(rfid.model_dump())
+    doc_ref.set(rfid_data)
+    
     return rfid
 
 @router.put("/{uid}", response_model=RFIDDocument)
 def update_rfid(uid: str, rfid: RFIDDocument, user=Depends(verify_token)):
     db = firestore.client()
     doc_ref = db.collection("rfid").document(uid)
+    
     if not doc_ref.get().exists:
         raise HTTPException(status_code=404, detail="RFID not found")
-    doc_ref.update(rfid.model_dump())
+    
+    # Ensure the UID in the body matches the URL parameter
+    if rfid.uid != uid:
+        raise HTTPException(status_code=400, detail="UID cannot be changed")
+    
+    # Update only allowed fields (exclude dateAdded to preserve original)
+    update_data = {
+        'balance': rfid.balance,
+        'status': rfid.status
+    }
+    
+    doc_ref.update(update_data)
     return rfid
 
 @router.delete("/{uid}", status_code=204)
