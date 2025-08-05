@@ -51,7 +51,5 @@ def delete_vehicle(doc_id: str, user=Depends(verify_token)):
     doc = doc_ref.get()
     if not doc.exists:
         raise HTTPException(status_code=404, detail="Vehicle not found")
-    data = doc.to_dict()
-    if data["status"] != "parking":
-        raise HTTPException(status_code=400, detail="Only vehicles with status 'parking' can be deleted")
+    # Allow deleting vehicles regardless of status
     doc_ref.delete()

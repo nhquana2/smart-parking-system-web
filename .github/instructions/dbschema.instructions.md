@@ -32,7 +32,7 @@ applyTo: "**"
     -   `timeIn`: timestamp (e.g. 2025-07-30T07:34:20Z)
     -   `timeOut`: timestamp (optional, only present if status is "exit")
 -   Document ID is auto-generated.
--   Only vehicles with status "parking" can be deleted. "exit" status is for log/traceback.
+    -   Vehicles can be deleted regardless of status. "exit" status is for log/traceback.
 -   `rfidUID` cannot be changed via update API.
 -   All endpoints should use this schema for vehicles operations.
 ```
