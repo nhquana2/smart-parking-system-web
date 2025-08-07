@@ -58,7 +58,7 @@ const sidebarSections = [
             },
             {
                 title: "Quản lý xe",
-                url: "#",
+                url: "/vehicle",
                 icon: Car,
             },
             {
