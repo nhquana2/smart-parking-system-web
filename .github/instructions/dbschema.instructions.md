@@ -37,4 +37,20 @@ applyTo: "**"
 -   `rfidUID` cannot be changed via update API.
 -   `fee` field only applies to vehicles with status "exit".
 -   All endpoints should use this schema for vehicles operations.
+
+## Firestore Fee Configuration Collection
+
+-   Collection name: `feeConfig`
+-   Document fields:
+    -   `pricePerHour`: number (e.g. 5000 - price per hour in VND)
+    -   `multiplier`: number (e.g. 1.5 - multiplier for additional hours)
+    -   `maximumPrice`: number (e.g. 50000 - maximum price per day in VND)
+    -   `additionalCharge`: number (e.g. 2000 - additional charge for services in VND)
+-   Document ID: "defaultFee" (fixed document ID)
+-   All endpoints should use this schema for fee configuration operations.
+
+## Example
+
+{ "pricePerHour": 5000, "multiplier": 1.5, "maximumPrice": 50000, "additionalCharge": 2000 }
+
 ```

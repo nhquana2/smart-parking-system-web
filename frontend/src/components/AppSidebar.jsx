@@ -63,7 +63,7 @@ const sidebarSections = [
             },
             {
                 title: "Cài đặt giá",
-                url: "#",
+                url: "/fee-config",
                 icon: Coins,
             },
             {

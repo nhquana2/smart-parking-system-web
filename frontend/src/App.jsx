@@ -9,6 +9,7 @@ import AuthRoute from "./components/AuthRoute";
 import { Layout } from "./layouts/DashboardLayout";
 import RFID from "./pages/RFID";
 import Vehicle from "./pages/Vehicle";
+import FeeConfig from "./pages/FeeConfig";
 
 export default function App() {
     return (
@@ -37,6 +38,7 @@ export default function App() {
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="rfid" element={<RFID />} />
                         <Route path="vehicle" element={<Vehicle />} />
+                        <Route path="fee-config" element={<FeeConfig />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
