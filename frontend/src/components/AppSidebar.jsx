@@ -68,7 +68,7 @@ const sidebarSections = [
             },
             {
                 title: "Log hệ thống",
-                url: "#",
+                url: "/logs",
                 icon: ScrollText,
             },
         ],

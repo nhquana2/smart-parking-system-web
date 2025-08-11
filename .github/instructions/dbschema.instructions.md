@@ -53,4 +53,19 @@ applyTo: "**"
 
 { "pricePerHour": 5000, "multiplier": 1.5, "maximumPrice": 50000, "additionalCharge": 2000 }
 
+## Firestore Logs Collection
+
+-   Collection name: `logs`
+-   Document fields:
+    -   `type`: string ("vehicle_in", "vehicle_out", or "device")
+    -   `message`: string (log message description)
+    -   `dateLogged`: timestamp (e.g. 2025-08-11T10:30:00Z)
+-   Document ID is auto-generated.
+-   All endpoints should use this schema for logs operations.
+-   `dateLogged` must be a Firestore timestamp.
+
+## Example
+
+{ "type": "vehicle_in", "message": "Vehicle with license plate 50A00001 entered the parking", "dateLogged": <timestamp> }
+
 ```

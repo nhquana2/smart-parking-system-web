@@ -10,6 +10,7 @@ import { Layout } from "./layouts/DashboardLayout";
 import RFID from "./pages/RFID";
 import Vehicle from "./pages/Vehicle";
 import FeeConfig from "./pages/FeeConfig";
+import Logs from "./pages/Logs";
 
 export default function App() {
     return (
@@ -39,6 +40,7 @@ export default function App() {
                         <Route path="rfid" element={<RFID />} />
                         <Route path="vehicle" element={<Vehicle />} />
                         <Route path="fee-config" element={<FeeConfig />} />
+                        <Route path="logs" element={<Logs />} />
                     </Route>
                 </Routes>
             </BrowserRouter>
