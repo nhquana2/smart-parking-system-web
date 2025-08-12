@@ -13,6 +13,7 @@ import {
     ChevronUp,
     LogOut,
     User,
+    Gamepad2,
 } from "lucide-react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
@@ -83,8 +84,8 @@ const sidebarSections = [
             },
             {
                 title: "Điều khiển thiết bị",
-                url: "#",
-                icon: Microchip,
+                url: "/device-control",
+                icon: Gamepad2,
             },
         ],
     },

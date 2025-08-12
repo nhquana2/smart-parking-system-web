@@ -11,6 +11,7 @@ import RFID from "./pages/RFID";
 import Vehicle from "./pages/Vehicle";
 import FeeConfig from "./pages/FeeConfig";
 import Logs from "./pages/Logs";
+import DeviceControl from "./pages/DeviceControl";
 
 export default function App() {
     return (
@@ -41,6 +42,7 @@ export default function App() {
                         <Route path="vehicle" element={<Vehicle />} />
                         <Route path="fee-config" element={<FeeConfig />} />
                         <Route path="logs" element={<Logs />} />
+                        <Route path="device-control" element={<DeviceControl />} />
                     </Route>
                 </Routes>
             </BrowserRouter>

@@ -7,3 +7,4 @@ fast-alpr[onnx]
 numpy
 opencv-python
 python-multipart
+paho-mqtt

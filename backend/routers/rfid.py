@@ -28,7 +28,7 @@ def get_rfid(uid: str, user=Depends(verify_token)):
     doc = db.collection("rfid").document(uid).get()
     if not doc.exists:
         raise HTTPException(status_code=404, detail="RFID not found")
-    return RFIDDocument(**doc.to_dict())
+    return RFIDDocument(**doc.to_dict()) 
 
 @router.post("/", response_model=RFIDDocument, status_code=201)
 def create_rfid(rfid: RFIDDocument, user=Depends(verify_token)):
