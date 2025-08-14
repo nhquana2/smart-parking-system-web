@@ -1,7 +1,7 @@
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, rfid, vehicle, fee_config, log, device_control
+from routers import auth, rfid, vehicle, fee_config, log, device_control, device_info
 from routers import plate_recognition
 
 app = FastAPI()
@@ -23,6 +23,7 @@ app.include_router(fee_config.router)
 app.include_router(log.router)
 app.include_router(plate_recognition.router)
 app.include_router(device_control.router)
+app.include_router(device_info.router)
 
 @app.get("/")
 def read_root():

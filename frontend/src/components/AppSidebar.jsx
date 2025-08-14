@@ -79,7 +79,7 @@ const sidebarSections = [
         items: [
             {
                 title: "Trạng thái thiết bị",
-                url: "#",
+                url: "/device-status",
                 icon: Microchip,
             },
             {
