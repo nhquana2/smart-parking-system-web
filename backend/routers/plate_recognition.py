@@ -1,10 +1,17 @@
 from fastapi import APIRouter, File, UploadFile, HTTPException, Body
+from fastapi.responses import FileResponse
 from models.plate_recognition import OCRResponse
 import numpy as np
 import cv2
+import os
 from fast_alpr import ALPR
 
 router = APIRouter(prefix="/plate", tags=["plate_recognition"])
+
+# Create uploads directory if it doesn't exist
+UPLOADS_DIR = "uploads"
+os.makedirs(UPLOADS_DIR, exist_ok=True)
+IMAGE_PATH = os.path.join(UPLOADS_DIR, "most_recent_image.jpg")
 
 print("Initializing AI models...")
 try:
@@ -25,8 +32,8 @@ async def recognize_license_plate(
         raise HTTPException(status_code=503, detail="Service Unavailable: The ALPR model is not loaded.")
     try:
         img_bytes = data
-        # Save raw image data for debugging
-        with open("debug_raw_image.jpg", "wb") as f:
+        # Save raw image data to fixed path
+        with open(IMAGE_PATH, "wb") as f:
             f.write(img_bytes)
         img_array = np.frombuffer(img_bytes, np.uint8)
         img_bgr = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
@@ -43,3 +50,14 @@ async def recognize_license_plate(
         print(f"ERROR: An exception occurred during ALPR recognition: {e}")
         raise HTTPException(status_code=500, detail="An error occurred during the recognition process.")
     return OCRResponse(results=plate_strings)
+
+@router.get("/recent-image", summary="Get the most recent processed image")
+async def get_recent_image():
+    if not os.path.exists(IMAGE_PATH):
+        raise HTTPException(status_code=404, detail="No recent image found")
+    
+    return FileResponse(
+        path=IMAGE_PATH,
+        media_type="image/jpeg",
+        filename="most_recent_image.jpg"
+    )

@@ -18,7 +18,7 @@ export default function DeviceControl() {
                         </div>
 
                         <div className="px-4 lg:px-6">
-                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid items-start gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 <LCDControlCard />
                                 <BuzzerControlCard />
                                 <ServoControlCard />

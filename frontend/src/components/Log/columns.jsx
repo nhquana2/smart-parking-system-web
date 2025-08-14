@@ -39,11 +39,7 @@ export const columns = [
         header: "Tin nhắn",
         cell: ({ row }) => {
             const message = row.getValue("message");
-            return (
-                <div className="max-w-[300px] truncate" title={message}>
-                    {message}
-                </div>
-            );
+            return <div className="max-w-[500px] break-words">{message}</div>;
         },
     },
     {
