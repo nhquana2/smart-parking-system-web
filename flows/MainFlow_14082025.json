@@ -1,0 +1,1389 @@
+[
+    {
+        "id": "681afbe6dc7caf82",
+        "type": "tab",
+        "label": "Main flows - SmartParking",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "bba6381159d50a9e",
+        "type": "mqtt in",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/rfid/tap",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "53a814dd11d283a3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 110,
+        "y": 200,
+        "wires": [
+            [
+                "b21bd652c1c4d3cc",
+                "aaf0d3dab2a4f949"
+            ]
+        ]
+    },
+    {
+        "id": "dcd94542ae5ac348",
+        "type": "Firestore in",
+        "z": "681afbe6dc7caf82",
+        "name": "Firestore read RFID ",
+        "collection": "",
+        "group": false,
+        "document": "",
+        "realtime": false,
+        "query": [],
+        "admin": "8ff6d1aba5f410cb",
+        "snapHandler": "",
+        "eject": false,
+        "x": 640,
+        "y": 140,
+        "wires": [
+            [
+                "e4dad8ea7d5e2952"
+            ]
+        ]
+    },
+    {
+        "id": "b21bd652c1c4d3cc",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Query by UID",
+        "func": "msg.firestore = {\n   collection: 'rfid',\n   realtime: false,\n   group: true,\n   query: [\n      {where: [\"uid\", \"==\", msg.payload.uid]},\n      {where: [\"status\", \"==\", \"active\"]},\n   ]\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 140,
+        "wires": [
+            [
+                "dcd94542ae5ac348"
+            ]
+        ]
+    },
+    {
+        "id": "7224c47dcab4775e",
+        "type": "inject",
+        "z": "681afbe6dc7caf82",
+        "name": "Sample data",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"uid\": \"BB6EAC7A\"}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 100,
+        "wires": [
+            [
+                "b21bd652c1c4d3cc",
+                "aaf0d3dab2a4f949"
+            ]
+        ]
+    },
+    {
+        "id": "cec9377d8ce5a1d1",
+        "type": "comment",
+        "z": "681afbe6dc7caf82",
+        "name": "Flow 1: tap RFID and response to board RFID valid status",
+        "info": "",
+        "x": 230,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "6d57b30b542f9352",
+        "type": "Firestore in",
+        "z": "681afbe6dc7caf82",
+        "name": "Firestore read vehicle with RFID",
+        "collection": "",
+        "group": false,
+        "document": "",
+        "realtime": false,
+        "query": [],
+        "admin": "8ff6d1aba5f410cb",
+        "snapHandler": "",
+        "eject": false,
+        "x": 690,
+        "y": 220,
+        "wires": [
+            [
+                "61ecd3e1a5741287"
+            ]
+        ]
+    },
+    {
+        "id": "aaf0d3dab2a4f949",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Query vehicle with RFID UID",
+        "func": "msg.firestore = {\n   collection: 'vehicles',\n   realtime: false,\n   group: true,\n   query: [\n      {where: [\"rfidUID\", \"==\", msg.payload.uid]},\n      {where: [\"status\", \"==\", \"parking\"]},\n   ]\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 220,
+        "wires": [
+            [
+                "6d57b30b542f9352"
+            ]
+        ]
+    },
+    {
+        "id": "3b73effef6efc160",
+        "type": "join",
+        "z": "681afbe6dc7caf82",
+        "name": "Join response obj",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "useparts": false,
+        "accumulate": false,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "num",
+        "reduceFixup": "",
+        "x": 1070,
+        "y": 140,
+        "wires": [
+            [
+                "aff497b78a0e8348"
+            ]
+        ]
+    },
+    {
+        "id": "e4dad8ea7d5e2952",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "RFID",
+        "func": "msg.topic = \"rfid\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 850,
+        "y": 140,
+        "wires": [
+            [
+                "3b73effef6efc160"
+            ]
+        ]
+    },
+    {
+        "id": "61ecd3e1a5741287",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Vehicle ",
+        "func": "msg.topic = \"vehicle\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 920,
+        "y": 220,
+        "wires": [
+            [
+                "3b73effef6efc160"
+            ]
+        ]
+    },
+    {
+        "id": "aff497b78a0e8348",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Response msg",
+        "func": "function isEmpty(val) {\n    return val == null ||\n           (typeof val === \"object\" && Object.keys(val).length === 0) ||\n           (typeof val === \"string\" && val.trim() === \"\");\n}\n\nconst { rfid, vehicle } = msg.payload;\n\nconst response = { payload: {} };\n\n//Invalid RFID card\nif (isEmpty(rfid)) {\n    response.payload.message = \"ERROR-INVALID-RFID\";\n    return response;\n}\n\n// No vehicle, RFID free\nif (isEmpty(vehicle)) {\n    response.payload.message = \"SUCCESS\";\n    response.payload.type = \"IN\";\n    response.payload.uid = Object.values(rfid)[0].uid;\n    return response;\n}\n\n// Vehicle is parking\nresponse.payload.message = \"SUCCESS\";\nresponse.payload.type = \"OUT\";\nresponse.payload.uid = Object.values(rfid)[0].uid;\nresponse.payload.licensePlate = Object.values(vehicle)[0].licensePlate;\nreturn response;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1280,
+        "y": 140,
+        "wires": [
+            [
+                "6c12e00bc54a4b96",
+                "fae933bfde12d3b0"
+            ]
+        ]
+    },
+    {
+        "id": "6c12e00bc54a4b96",
+        "type": "mqtt out",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/rfid/tap-status",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "53a814dd11d283a3",
+        "x": 1540,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "fae933bfde12d3b0",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1500,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "87eff7812b2ad283",
+        "type": "comment",
+        "z": "681afbe6dc7caf82",
+        "name": "Flow 2: vehicle in (after checking RFID valid) -> Add to DB",
+        "info": "",
+        "x": 230,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "cf374d07d0444dc6",
+        "type": "mqtt in",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/vehicle/in",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "53a814dd11d283a3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 120,
+        "y": 480,
+        "wires": [
+            [
+                "766d90fa0ca40b09"
+            ]
+        ]
+    },
+    {
+        "id": "7f047229a98441a4",
+        "type": "Firestore out",
+        "z": "681afbe6dc7caf82",
+        "name": "Add vehicle with status \"parking\"",
+        "collection": "vehicles",
+        "document": "",
+        "operation": "add",
+        "admin": "8ff6d1aba5f410cb",
+        "eject": false,
+        "x": 670,
+        "y": 480,
+        "wires": [
+            [
+                "3e55ba959e36198f"
+            ]
+        ]
+    },
+    {
+        "id": "766d90fa0ca40b09",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Prepare vehicle data",
+        "func": "msg.payload.status = \"parking\";\nmsg.payload.timeIn = new Date();\nmsg.licensePlate = msg.payload.licensePlate;\nmsg.rfidUID = msg.payload.rfidUID;\nmsg.timeIn = msg.payload.timeIn;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 380,
+        "y": 480,
+        "wires": [
+            [
+                "7f047229a98441a4"
+            ]
+        ]
+    },
+    {
+        "id": "b153b90ce9ab3eaa",
+        "type": "catch",
+        "z": "681afbe6dc7caf82",
+        "name": "Catch error Firestore Flow 1",
+        "scope": [
+            "dcd94542ae5ac348",
+            "6d57b30b542f9352"
+        ],
+        "uncaught": false,
+        "x": 840,
+        "y": 40,
+        "wires": [
+            [
+                "204cf3107d076132"
+            ]
+        ]
+    },
+    {
+        "id": "204cf3107d076132",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "ERROR-FIRESTORE msg",
+        "func": "msg.payload = {message: \"ERROR-FIRESTORE\", error: msg.error.message};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1200,
+        "y": 40,
+        "wires": [
+            [
+                "6c12e00bc54a4b96",
+                "066444cb04311b2a"
+            ]
+        ]
+    },
+    {
+        "id": "066444cb04311b2a",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1440,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "f83f2bb70a2a2a26",
+        "type": "catch",
+        "z": "681afbe6dc7caf82",
+        "name": "Catch error Firestore Flow 2",
+        "scope": [
+            "7f047229a98441a4"
+        ],
+        "uncaught": false,
+        "x": 660,
+        "y": 380,
+        "wires": [
+            [
+                "0b14641cc6166dcd"
+            ]
+        ]
+    },
+    {
+        "id": "0b14641cc6166dcd",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "ERROR-FIRESTORE msg",
+        "func": "msg.payload = {message: \"ERROR-FIRESTORE\", error: msg.error.message};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 380,
+        "wires": [
+            [
+                "1bfb9de8cceb9d3e",
+                "2726ae3abdb5dd52"
+            ]
+        ]
+    },
+    {
+        "id": "1bfb9de8cceb9d3e",
+        "type": "mqtt out",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/vehicle/in-status",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "53a814dd11d283a3",
+        "x": 1450,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "2726ae3abdb5dd52",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1280,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "89eae0e26a3b70dc",
+        "type": "comment",
+        "z": "681afbe6dc7caf82",
+        "name": "Flow 3: vehicle out",
+        "info": "",
+        "x": 110,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "c4cca59a194cb77b",
+        "type": "inject",
+        "z": "681afbe6dc7caf82",
+        "name": "Sample vehice IN",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"rfidUID\": \"3BB2C97A\", \"licensePlate\": \"50A00001\"}",
+        "payloadType": "json",
+        "x": 120,
+        "y": 420,
+        "wires": [
+            [
+                "766d90fa0ca40b09"
+            ]
+        ]
+    },
+    {
+        "id": "3e55ba959e36198f",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Response msg",
+        "func": "msg.payload = {\n    message: \"SUCCESS\", \n    licensePlate: msg.licensePlate\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 480,
+        "wires": [
+            [
+                "1bfb9de8cceb9d3e",
+                "e946b02102f6d0d3",
+                "5a732dac2c23f5a7",
+                "771aba81926bf7f6"
+            ]
+        ]
+    },
+    {
+        "id": "e946b02102f6d0d3",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 7",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1240,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "24225d2f859275a8",
+        "type": "mqtt in",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/vehicle/out",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "53a814dd11d283a3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 880,
+        "wires": [
+            [
+                "cddbe7a51a80474f"
+            ]
+        ]
+    },
+    {
+        "id": "71d2ef1fb9e8225f",
+        "type": "inject",
+        "z": "681afbe6dc7caf82",
+        "name": "Sample vehicle OUT",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "{\"licensePlate\":  \"50A00001\", \"rfidUID\": \"3BB2C97A\"}",
+        "payloadType": "json",
+        "x": 130,
+        "y": 800,
+        "wires": [
+            [
+                "cddbe7a51a80474f"
+            ]
+        ]
+    },
+    {
+        "id": "446791cda2ce09c3",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Query vehicle",
+        "func": "msg.firestore = {\n   collection: 'vehicles',\n   realtime: false,\n   group: true,\n   query: [\n      {where: [\"licensePlate\", \"==\", msg.licensePlate]},\n      {where: [\"rfidUID\", \"==\", msg.rfidUID]},\n      {where: [\"status\", \"==\", \"parking\"]},\n   ]\n};\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 820,
+        "wires": [
+            [
+                "75426235aa1872fc"
+            ]
+        ]
+    },
+    {
+        "id": "75426235aa1872fc",
+        "type": "Firestore in",
+        "z": "681afbe6dc7caf82",
+        "name": "Firestore query vehicle to update",
+        "collection": "",
+        "group": false,
+        "document": "",
+        "realtime": false,
+        "query": [],
+        "admin": "8ff6d1aba5f410cb",
+        "snapHandler": "",
+        "eject": false,
+        "x": 1240,
+        "y": 820,
+        "wires": [
+            [
+                "dc4bbf1390bc1b63",
+                "0dead440d0a3a8b9"
+            ]
+        ]
+    },
+    {
+        "id": "77096cc2dcec3c66",
+        "type": "catch",
+        "z": "681afbe6dc7caf82",
+        "name": "Catch error Firestore Flow 3",
+        "scope": [
+            "75426235aa1872fc",
+            "dc4bbf1390bc1b63",
+            "72a396d7bc4c049b"
+        ],
+        "uncaught": false,
+        "x": 1460,
+        "y": 720,
+        "wires": [
+            [
+                "55802576bb6c2061"
+            ]
+        ]
+    },
+    {
+        "id": "55802576bb6c2061",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "ERROR-FIRESTORE msg",
+        "func": "msg.payload = {message: \"ERROR-FIRESTORE\", error: msg.error.message};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1800,
+        "y": 720,
+        "wires": [
+            [
+                "aa8c3139a358a5e6",
+                "e8b8050863551864"
+            ]
+        ]
+    },
+    {
+        "id": "aa8c3139a358a5e6",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 2180,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "dc4bbf1390bc1b63",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Get doc ID for update",
+        "func": "const response = {payload: {}}\n\nif (Object.keys(msg.payload).length === 0) {\n    node.error(\"Vehicle with RFID not found\", msg);\n    return null;\n}\n\nresponse.docID = Object.keys(msg.payload)[0]; //get document ID of 'vehicles'\nresponse.payload.timeOut = new Date();\nresponse.payload.status = \"exit\";\n\n// Price calculations\nconst pricePerHour = flow.get('pricePerHour') || 0;\nconst multiplier = flow.get('multiplier') || 1;\nconst maximumPrice = flow.get('maximumPrice') || Infinity; // Use Infinity if no max price is set\nconst additionalCharge = flow.get('additionalCharge') || 0;\n\nconst timeIn = new Date(msg.payload[Object.keys(msg.payload)[0]].timeIn.toDate());\nconst timeOut = response.payload.timeOut; \n\nconst durationInMillis = timeOut.getTime() - timeIn.getTime();\nconst hoursParked = Math.ceil(durationInMillis / 3600000); // 3600000 = 1000ms * 60s * 60min\n\nlet calculatedPrice = hoursParked * pricePerHour * multiplier;\nlet finalPrice = Math.min(calculatedPrice, maximumPrice);\nfinalPrice += additionalCharge;\n\nresponse.payload.fee = parseInt(finalPrice, 10)\n\nresponse.uid = msg.rfidUID;\nresponse.licensePlate = msg.licensePlate;\nresponse.fee = response.payload.fee;\nresponse.timeOut = response.payload.timeOut;\n\nreturn response;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 820,
+        "wires": [
+            [
+                "72a396d7bc4c049b"
+            ]
+        ]
+    },
+    {
+        "id": "72a396d7bc4c049b",
+        "type": "Firestore out",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "collection": "vehicles",
+        "document": "{{docID}}",
+        "operation": "update",
+        "admin": "8ff6d1aba5f410cb",
+        "eject": false,
+        "x": 1740,
+        "y": 820,
+        "wires": [
+            [
+                "eeb2bd5afde279a0"
+            ]
+        ]
+    },
+    {
+        "id": "eeb2bd5afde279a0",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Response msg",
+        "func": "msg.payload = {\n    message: \"SUCCESS\", \n    licensePlate: msg.licensePlate,\n    uid: msg.uid,\n    fee: msg.fee\n};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1940,
+        "y": 820,
+        "wires": [
+            [
+                "e8b8050863551864",
+                "3487644be11cb7a4",
+                "43a54aa5451e49a0",
+                "bcc906648eeac80c"
+            ]
+        ]
+    },
+    {
+        "id": "e8b8050863551864",
+        "type": "mqtt out",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/vehicle/out-status",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "53a814dd11d283a3",
+        "x": 2290,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "b75e8532f0aa16c2",
+        "type": "comment",
+        "z": "681afbe6dc7caf82",
+        "name": "Flow 4: Tap add RFID card to DB (upload sketch for add card)",
+        "info": "",
+        "x": 240,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "81546ec85c64f3ab",
+        "type": "mqtt in",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/rfid/add",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "53a814dd11d283a3",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 140,
+        "y": 1180,
+        "wires": [
+            [
+                "4763b22724351aba",
+                "5633179baf09f78d"
+            ]
+        ]
+    },
+    {
+        "id": "4763b22724351aba",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Prepare RFID card data",
+        "func": "msg.payload.status = \"active\";\nmsg.payload.dateAdded = new Date();\nmsg.payload.balance = 0;\nmsg.uid = msg.payload.uid; //save for response msg\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 410,
+        "y": 1180,
+        "wires": [
+            [
+                "aecf9e2592f4a686"
+            ]
+        ]
+    },
+    {
+        "id": "aecf9e2592f4a686",
+        "type": "Firestore out",
+        "z": "681afbe6dc7caf82",
+        "name": "Firestore Add RFID card",
+        "collection": "rfid",
+        "document": "{{uid}}",
+        "operation": "set",
+        "admin": "8ff6d1aba5f410cb",
+        "eject": false,
+        "x": 670,
+        "y": 1180,
+        "wires": [
+            [
+                "bb0ae280d64bd18e"
+            ]
+        ]
+    },
+    {
+        "id": "bb0ae280d64bd18e",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Response msg",
+        "func": "msg.payload = {message: \"SUCCESS\", uid: msg.uid};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 1180,
+        "wires": [
+            [
+                "e16f3166ad0cdf34",
+                "fa16a4c2e1d752e5",
+                "35af1efa9489da09"
+            ]
+        ]
+    },
+    {
+        "id": "e16f3166ad0cdf34",
+        "type": "mqtt out",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/rfid/add-status",
+        "qos": "",
+        "retain": "false",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "53a814dd11d283a3",
+        "x": 1300,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "fa16a4c2e1d752e5",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 8",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1200,
+        "y": 1300,
+        "wires": []
+    },
+    {
+        "id": "4b362573151fc9cf",
+        "type": "catch",
+        "z": "681afbe6dc7caf82",
+        "name": "Catch error Firestore Flow 4",
+        "scope": [
+            "aecf9e2592f4a686"
+        ],
+        "uncaught": false,
+        "x": 680,
+        "y": 1100,
+        "wires": [
+            [
+                "4755c894418499de"
+            ]
+        ]
+    },
+    {
+        "id": "4755c894418499de",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "ERROR-FIRESTORE msg",
+        "func": "msg.payload = {message: \"ERROR-FIRESTORE\", error: msg.error.message};\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 1100,
+        "wires": [
+            [
+                "e16f3166ad0cdf34",
+                "4abc3d8dee208ae4",
+                "8449f3f3deb2a998"
+            ]
+        ]
+    },
+    {
+        "id": "4abc3d8dee208ae4",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 9",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1440,
+        "y": 1080,
+        "wires": []
+    },
+    {
+        "id": "bcb6d73d18f5b0cb",
+        "type": "mqtt out",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/lcd/show",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "53a814dd11d283a3",
+        "x": 2220,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "35af1efa9489da09",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "LCD msg add success",
+        "func": "msg.payload = {};\nmsg.payload.line1 = \"UID: \" + msg.uid;\nmsg.payload.line2 = \"Them thanh cong!\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1400,
+        "y": 1260,
+        "wires": [
+            [
+                "bcb6d73d18f5b0cb",
+                "4412ff9bc6621425",
+                "c897375374561160"
+            ]
+        ]
+    },
+    {
+        "id": "4412ff9bc6621425",
+        "type": "mqtt out",
+        "z": "681afbe6dc7caf82",
+        "name": "",
+        "topic": "smartparking/buzzer/play",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "53a814dd11d283a3",
+        "x": 2210,
+        "y": 1260,
+        "wires": []
+    },
+    {
+        "id": "c897375374561160",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 11",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1720,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "5633179baf09f78d",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 12",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 480,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "8449f3f3deb2a998",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "LCD msg failure",
+        "func": "msg.payload = {};\nmsg.payload.line1 = \"Thêm that bai!\"\nmsg.payload.line2 = \"Vui long ktra lai\";\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1520,
+        "y": 1140,
+        "wires": [
+            [
+                "bcb6d73d18f5b0cb"
+            ]
+        ]
+    },
+    {
+        "id": "5a732dac2c23f5a7",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Prepare email content ",
+        "func": "msg.topic = \"Xe \" + msg.licensePlate + \" vào bãi\";\nmsg.payload = \"Xe \" + msg.licensePlate + \" vào bãi với RFID mã \" + msg.rfidUID;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1480,
+        "y": 500,
+        "wires": [
+            [
+                "1607ccaeec105869"
+            ]
+        ]
+    },
+    {
+        "id": "1607ccaeec105869",
+        "type": "e-mail",
+        "z": "681afbe6dc7caf82",
+        "server": "smtp.gmail.com",
+        "port": "587",
+        "authtype": "BASIC",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": false,
+        "tls": false,
+        "name": "quannguyenhoang79@gmail.com",
+        "dname": "Send email vehicle IN",
+        "x": 1720,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "5003c9b3f3f1f0b2",
+        "type": "Firestore out",
+        "z": "681afbe6dc7caf82",
+        "name": "Save log vehicle IN",
+        "collection": "logs",
+        "document": "",
+        "operation": "add",
+        "admin": "8ff6d1aba5f410cb",
+        "eject": false,
+        "x": 1710,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "771aba81926bf7f6",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Prepare log data",
+        "func": "msg.payload = {};\nmsg.payload.type = \"vehicle_in\";\nmsg.payload.message = \"Xe \" + msg.licensePlate + \" vào bãi với RFID mã \" + msg.rfidUID;\nmsg.payload.dateLogged = msg.timeIn;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1470,
+        "y": 560,
+        "wires": [
+            [
+                "5003c9b3f3f1f0b2"
+            ]
+        ]
+    },
+    {
+        "id": "64fb073f153587b0",
+        "type": "Firestore in",
+        "z": "681afbe6dc7caf82",
+        "name": "Read feeConfig",
+        "collection": "feeConfig",
+        "group": false,
+        "document": "defaultFee",
+        "realtime": false,
+        "query": [],
+        "admin": "8ff6d1aba5f410cb",
+        "snapHandler": "",
+        "eject": false,
+        "x": 560,
+        "y": 820,
+        "wires": [
+            [
+                "3e7e33e9be979251"
+            ]
+        ]
+    },
+    {
+        "id": "cddbe7a51a80474f",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Store data",
+        "func": "msg.licensePlate = msg.payload.licensePlate;\nmsg.rfidUID = msg.payload.rfidUID;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 350,
+        "y": 820,
+        "wires": [
+            [
+                "64fb073f153587b0"
+            ]
+        ]
+    },
+    {
+        "id": "3e7e33e9be979251",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Update fee to flow",
+        "func": "flow.set('additionalCharge', msg.payload.additionalCharge);\nflow.set('maximumPrice', msg.payload.maximumPrice);\nflow.set('multiplier', msg.payload.multiplier);\nflow.set('pricePerHour', msg.payload.pricePerHour);\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 790,
+        "y": 820,
+        "wires": [
+            [
+                "446791cda2ce09c3"
+            ]
+        ]
+    },
+    {
+        "id": "0dead440d0a3a8b9",
+        "type": "debug",
+        "z": "681afbe6dc7caf82",
+        "name": "debug 10",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1460,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "3487644be11cb7a4",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Prepare email vehicle OUT ",
+        "func": "msg.topic = \"Xe \" + msg.licensePlate + \" ra bãi\";\nmsg.payload = \"Xe \" + msg.licensePlate + \" ra khỏi bãi với RFID mã \" + msg.uid + \" với số tiền \" + msg.fee;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2220,
+        "y": 880,
+        "wires": [
+            [
+                "f7127af5d9724b67"
+            ]
+        ]
+    },
+    {
+        "id": "f7127af5d9724b67",
+        "type": "e-mail",
+        "z": "681afbe6dc7caf82",
+        "server": "smtp.gmail.com",
+        "port": "587",
+        "authtype": "BASIC",
+        "saslformat": true,
+        "token": "oauth2Response.access_token",
+        "secure": false,
+        "tls": false,
+        "name": "quannguyenhoang79@gmail.com",
+        "dname": "Send email vehicle OUT",
+        "x": 2530,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "43a54aa5451e49a0",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Prepare log data vehicle OUT",
+        "func": "msg.payload = {};\nmsg.payload.type = \"vehicle_out\";\nmsg.payload.message = \"Xe \" + msg.licensePlate + \" ra khỏi bãi với RFID mã \" + msg.uid + \" và số tiền \" + msg.fee;\nmsg.payload.dateLogged = msg.timeOut;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2230,
+        "y": 940,
+        "wires": [
+            [
+                "8cc04ddad69bdf70"
+            ]
+        ]
+    },
+    {
+        "id": "8cc04ddad69bdf70",
+        "type": "Firestore out",
+        "z": "681afbe6dc7caf82",
+        "name": "Save log vehicle OUT",
+        "collection": "logs",
+        "document": "",
+        "operation": "add",
+        "admin": "8ff6d1aba5f410cb",
+        "eject": false,
+        "x": 2520,
+        "y": 940,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4d97958e872ec8c2",
+        "type": "Firestore out",
+        "z": "681afbe6dc7caf82",
+        "name": "Update balance for RFID",
+        "collection": "rfid",
+        "document": "{{uid}}",
+        "operation": "update",
+        "admin": "8ff6d1aba5f410cb",
+        "eject": false,
+        "x": 2650,
+        "y": 1000,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "915a3dfae0056771",
+        "type": "function",
+        "z": "681afbe6dc7caf82",
+        "name": "Prepare balance update payload",
+        "func": "msg.balance = msg.payload.balance; // Current balance query\n\nmsg.payload = {\n  balance: msg.balance - msg.fee // New balance\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 2330,
+        "y": 1000,
+        "wires": [
+            [
+                "4d97958e872ec8c2"
+            ]
+        ]
+    },
+    {
+        "id": "bcc906648eeac80c",
+        "type": "Firestore in",
+        "z": "681afbe6dc7caf82",
+        "name": "Get RFID ",
+        "collection": "rfid",
+        "group": false,
+        "document": "{{uid}}",
+        "realtime": false,
+        "query": [],
+        "admin": "8ff6d1aba5f410cb",
+        "snapHandler": "",
+        "eject": false,
+        "x": 2080,
+        "y": 1000,
+        "wires": [
+            [
+                "915a3dfae0056771"
+            ]
+        ]
+    },
+    {
+        "id": "53a814dd11d283a3",
+        "type": "mqtt-broker",
+        "name": "MQTT",
+        "broker": "127.0.0.1",
+        "port": 1883,
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": 4,
+        "keepalive": 60,
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "8ff6d1aba5f410cb",
+        "type": "firebase admin",
+        "name": "Firestore sdk JSON"
+    }
+]
