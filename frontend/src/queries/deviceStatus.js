@@ -48,7 +48,7 @@ export const useRecentImage = (token) => {
             return URL.createObjectURL(blob);
         },
         enabled: !!token,
-        refetchInterval: 5000, // Refetch every 5 seconds for real-time updates
+        refetchInterval: 1000, // Refetch every 5 seconds for real-time updates
         staleTime: 0, // Always consider data stale to ensure fresh images
     });
 };

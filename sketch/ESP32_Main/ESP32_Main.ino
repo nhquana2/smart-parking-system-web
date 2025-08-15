@@ -9,9 +9,9 @@
 #include "camera_pins.h"
 
 // —— WIFI & MQTT setup ——
-const char* WIFI_SSID     = "Hoang Phuc";
-const char* WIFI_PASSWORD = "211211211";
-const char* MQTT_BROKER   = "192.168.3.120";
+const char* WIFI_SSID     = "TrustHome Tang 6";
+const char* WIFI_PASSWORD = "trusthome";
+const char* MQTT_BROKER   = "192.168.1.31";
 const uint16_t MQTT_PORT  = 1883;
 
 
@@ -26,7 +26,6 @@ const char* TOPIC_VEHICLE_OUT        = "smartparking/vehicle/out";
 const char* TOPIC_VEHICLE_OUT_STATUS = "smartparking/vehicle/out-status";
 const char* TOPIC_SERVO_OPEN = "smartparking/servo/open";
 const char* TOPIC_SERVO_CLOSE = "smartparking/servo/close";
-const char* TOPIC_RFID_LOG = "smartparking/rfid/log";
 #define SS_PIN   15
 #define RST_PIN   2
 #define TRIG_PIN   5;    // D1 (GPIO5)
@@ -40,7 +39,7 @@ PubSubClient  mqtt(net);
 
 enum State { IDLE, WAIT_TAP, WAIT_ANPR, WAIT_VEHICLE } state = IDLE;
 String lastUID, inOutType, licensePlate;
-const char* ANPR_URL = "http://192.168.3.120:8080/plate/recognize";
+const char* ANPR_URL = "http://192.168.1.31:8080/plate/recognize";
 
 // forward declarations
 void connectMQTT();
@@ -217,14 +216,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int len) {
     serializeJson(j2, buf2);
     const char* vt = (inOutType == "IN") ? TOPIC_VEHICLE_IN : TOPIC_VEHICLE_OUT;
     mqtt.publish(vt, buf2);
-    Serial.println(String("-> ") + vt + ": " + licensePlate);
-    StaticJsonDocument<64> logDoc;
-    logDoc["uid"] = lastUID;
-    char logBuf[64];
-    serializeJson(logDoc, logBuf);
-    mqtt.publish(TOPIC_RFID_LOG, logBuf);
-    Serial.println(String("Log UID -> ") + TOPIC_RFID_LOG + ": " + lastUID);
-    
+    Serial.println(String("-> ") + vt + ": " + licensePlate);    
     state = WAIT_VEHICLE;
 
   }
@@ -233,18 +225,21 @@ void mqttCallback(char* topic, byte* payload, unsigned int len) {
            (strcmp(topic, TOPIC_VEHICLE_IN_STATUS) == 0 ||
             strcmp(topic, TOPIC_VEHICLE_OUT_STATUS) == 0)) {
     const char* msg = doc["message"] | "";
+    int fee = doc["fee"];
     if (strcmp(msg, "SUCCESS") != 0) {
-      publishLCD("Loi he thong", "Vui long thu lai");
+      publishLCD("Da co xe va the", "Vui long thu lai");
       publishBuzzer();
     } else {
       publishBuzzer();
       if (inOutType == "IN") {
         publishLCD("Moi xe vao", licensePlate.c_str());
-        publishServoOpen();
       } else {
-        publishLCD("Moi xe ra", licensePlate.c_str());
-        publishServoClose();
+        String feeStr = String(fee);
+        publishLCD(("Xe ra " + licensePlate).c_str(), (feeStr + "VND").c_str());
       }
+      publishServoOpen();
+      delay(50);
+      publishServoClose();
       
     }
     resetState();

@@ -4,9 +4,9 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <Servo.h>
-const char* WIFI_SSID     = "maingan";
-const char* WIFI_PASSWORD = "mingan66";
-const char* MQTT_BROKER   = "172.20.10.13";
+const char* WIFI_SSID     = "TrustHome Tang 6";
+const char* WIFI_PASSWORD = "trusthome";
+const char* MQTT_BROKER   = "192.168.1.31";
 const uint16_t MQTT_PORT  = 1883;
 
 const char* TOPIC_SHOW    = "smartparking/lcd/show";

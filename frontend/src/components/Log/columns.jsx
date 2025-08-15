@@ -4,6 +4,24 @@ import { Trash2, AlertCircle, ArrowUp, ArrowDown, Microchip } from "lucide-react
 import { useState } from "react";
 import LogDeleteDialog from "./LogDeleteDialog";
 
+const formatDateTime = (dateString) => {
+    if (!dateString) return "-";
+    const date = new Date(dateString);
+
+    // Check if date is valid
+    if (isNaN(date.getTime())) return "-";
+
+    return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true, // Enable 12-hour format with AM/PM
+        timeZone: "Asia/Ho_Chi_Minh", // Explicitly set timezone for Vietnam
+    });
+};
+
 export const columns = [
     {
         accessorKey: "type",
@@ -47,21 +65,7 @@ export const columns = [
         header: "Thời gian",
         cell: ({ row }) => {
             const date = row.getValue("dateLogged");
-            if (!date) return "-";
-
-            try {
-                const formatted = new Date(date).toLocaleString("vi-VN", {
-                    year: "numeric",
-                    month: "2-digit",
-                    day: "2-digit",
-                    hour: "2-digit",
-                    minute: "2-digit",
-                    second: "2-digit",
-                });
-                return <span className="font-mono text-sm">{formatted}</span>;
-            } catch (error) {
-                return <span className="text-muted-foreground">Invalid date</span>;
-            }
+            return <div className="text-sm">{formatDateTime(date)}</div>;
         },
     },
     {
