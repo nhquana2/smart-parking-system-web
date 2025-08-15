@@ -25,6 +25,14 @@ Servo servo;
 bool opened = false;             
 bool closing_in_progress = false; 
 
+void printLCDReady() {
+    lcd.clear();
+    const char* l1 = "SMART PARKING";
+    const char* l2 = "San sang tap";
+    lcd.setCursor(0, 0); lcd.print(l1); Serial.println(l1);
+    lcd.setCursor(0, 1); lcd.print(l2); Serial.println(l2);
+}
+
 float readDistance() {
   digitalWrite(TRIG_PIN, LOW); delayMicroseconds(3);
   digitalWrite(TRIG_PIN, HIGH); delayMicroseconds(10);
@@ -96,6 +104,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int len) {
     closing_in_progress = true;
     waitCarPassAndClose();
     closing_in_progress = false;
+    printLCDReady();
   }
 }
 
@@ -128,6 +137,8 @@ void setup() {
 
   mqtt.setServer(MQTT_BROKER, MQTT_PORT);
   mqtt.setCallback(mqttCallback);
+
+  printLCDReady();
   connectMQTT();
 }
 
