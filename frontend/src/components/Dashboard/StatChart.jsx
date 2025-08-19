@@ -9,11 +9,11 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useDashboardChartData } from "@/queries/dashboard";
 import { useAuth } from "@/contexts/AuthContext";
 
-export const description = "An interactive area chart";
+export const description = "Biểu đồ tương tác";
 
 const chartConfig = {
     visitors: {
-        label: "Visitors",
+        label: "Khách",
     },
     revenue: {
         label: "D.thu",
@@ -69,8 +69,8 @@ export function StatChart() {
             <CardHeader>
                 <CardTitle>Thống kê doanh thu và số xe</CardTitle>
                 <CardDescription>
-                    <span className="hidden @[540px]/card:block">Total for the last 3 months</span>
-                    <span className="@[540px]/card:hidden">Last 3 months</span>
+                    <span className="hidden @[540px]/card:block">Tổng trong 3 tháng gần nhất</span>
+                    <span className="@[540px]/card:hidden">3 tháng</span>
                 </CardDescription>
                 <CardAction>
                     <ToggleGroup
@@ -80,27 +80,27 @@ export function StatChart() {
                         variant="outline"
                         className="hidden *:data-[slot=toggle-group-item]:!px-4 @[767px]/card:flex"
                     >
-                        <ToggleGroupItem value="90d">Last 3 months</ToggleGroupItem>
-                        <ToggleGroupItem value="30d">Last 30 days</ToggleGroupItem>
-                        <ToggleGroupItem value="7d">Last 7 days</ToggleGroupItem>
+                        <ToggleGroupItem value="90d">3 tháng</ToggleGroupItem>
+                        <ToggleGroupItem value="30d">30 ngày</ToggleGroupItem>
+                        <ToggleGroupItem value="7d">7 ngày</ToggleGroupItem>
                     </ToggleGroup>
                     <Select value={timeRange} onValueChange={setTimeRange}>
                         <SelectTrigger
                             className="flex w-40 **:data-[slot=select-value]:block **:data-[slot=select-value]:truncate @[767px]/card:hidden"
                             size="sm"
-                            aria-label="Select a value"
+                            aria-label="Chọn khoảng thời gian"
                         >
-                            <SelectValue placeholder="Last 3 months" />
+                            <SelectValue placeholder="3 tháng" />
                         </SelectTrigger>
                         <SelectContent className="rounded-xl">
                             <SelectItem value="90d" className="rounded-lg">
-                                Last 3 months
+                                3 tháng
                             </SelectItem>
                             <SelectItem value="30d" className="rounded-lg">
-                                Last 30 days
+                                30 ngày
                             </SelectItem>
                             <SelectItem value="7d" className="rounded-lg">
-                                Last 7 days
+                                7 ngày
                             </SelectItem>
                         </SelectContent>
                     </Select>
