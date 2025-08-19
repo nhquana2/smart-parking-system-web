@@ -16,6 +16,8 @@ import {
     LogOut,
     User,
 } from "lucide-react";
+import { useDashboardStats } from "@/queries/dashboard";
+import { useAuth } from "@/contexts/AuthContext";
 
 function StatCard({ description, title, icon, footer }) {
     return (
@@ -31,29 +33,40 @@ function StatCard({ description, title, icon, footer }) {
 }
 
 export function StatCards() {
+    const { token } = useAuth();
+    const { data: stats, isLoading, error } = useDashboardStats(token);
+
+    // Format currency for display
+    const formatCurrency = (amount) => {
+        return new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+        }).format(amount);
+    };
+
     return (
         <div className="*:data-[slot=card]:from-primary/5 *:data-[slot=card]:to-card dark:*:data-[slot=card]:bg-card grid grid-cols-1 gap-4 px-4 *:data-[slot=card]:bg-gradient-to-t *:data-[slot=card]:shadow-xs lg:px-6 @xl/main:grid-cols-2 @5xl/main:grid-cols-4">
             <StatCard
                 description="Số xe trong bãi"
-                title={0}
+                title={isLoading ? "..." : stats?.vehiclesInParking || 0}
                 icon={<CarFront />}
                 footer={<div className="text-muted-foreground">Số xe đang giữ thời điểm hiện tại</div>}
             />
             <StatCard
                 description="Số lượng thẻ RFID"
-                title={0}
+                title={isLoading ? "..." : stats?.activeRfidCount || 0}
                 icon={<CreditCard />}
                 footer={<div className="text-muted-foreground">Số thẻ RFID đang hoạt động</div>}
             />
             <StatCard
                 description="Doanh thu trong ngày"
-                title={"0"}
+                title={isLoading ? "..." : formatCurrency(stats?.todayRevenue || 0)}
                 icon={<Coins />}
                 footer={<div className="text-muted-foreground">Doanh thu trong hôm nay</div>}
             />
             <StatCard
                 description="Mức giá cơ bản"
-                title={"4.5%"}
+                title={isLoading ? "..." : formatCurrency(stats?.basePricePerHour || 5000)}
                 icon={<Badge variant="outline">Chưa gồm phí</Badge>}
                 footer={<div className="text-muted-foreground">Giá cơ bản cho 1 giờ gửi</div>}
             />
