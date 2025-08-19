@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
+import { Area, AreaChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Card, CardAction, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -39,6 +39,16 @@ export function StatChart() {
     }, [isMobile]);
 
     const chartData = chartDataResponse?.chartData || [];
+
+    const formatCurrency = (value) => {
+        try {
+            return new Intl.NumberFormat("vi-VN", { maximumFractionDigits: 0 }).format(value) + " ₫";
+        } catch (e) {
+            return value;
+        }
+    };
+
+    const formatInteger = (value) => (Number.isFinite(value) ? value : "-");
 
     const filteredData = chartData.filter((item) => {
         const date = new Date(item.date);
@@ -119,6 +129,27 @@ export function StatChart() {
                                 </linearGradient>
                             </defs>
                             <CartesianGrid vertical={false} />
+                            {/* Left axis for vehicle count (small numbers) */}
+                            <YAxis
+                                yAxisId="left"
+                                tickFormatter={formatInteger}
+                                allowDecimals={false}
+                                tickLine={false}
+                                axisLine={false}
+                                width={48}
+                                domain={[0, "dataMax"]}
+                                tickCount={5}
+                            />
+                            {/* Right axis for revenue (separate scale) */}
+                            <YAxis
+                                yAxisId="right"
+                                orientation="right"
+                                tickFormatter={formatCurrency}
+                                tickLine={false}
+                                axisLine={false}
+                                width={96}
+                                domain={[0, "auto"]}
+                            />
                             <XAxis
                                 dataKey="date"
                                 tickLine={false}
@@ -148,13 +179,21 @@ export function StatChart() {
                                 }
                             />
                             <Area
+                                yAxisId="left"
                                 dataKey="vehicleCount"
                                 type="natural"
                                 fill="url(#fillVehicleCount)"
                                 stroke="var(--color-vehicleCount)"
-                                stackId="a"
+                                fillOpacity={0.9}
                             />
-                            <Area dataKey="revenue" type="natural" fill="url(#fillRevenue)" stroke="var(--color-revenue)" stackId="a" />
+                            <Area
+                                yAxisId="right"
+                                dataKey="revenue"
+                                type="natural"
+                                fill="url(#fillRevenue)"
+                                stroke="var(--color-revenue)"
+                                fillOpacity={0.9}
+                            />
                         </AreaChart>
                     </ChartContainer>
                 )}
