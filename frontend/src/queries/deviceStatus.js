@@ -21,7 +21,7 @@ export const useDeviceInfo = (token) => {
             return response.json();
         },
         enabled: !!token,
-        refetchInterval: 5000, // Refetch every 5 seconds for real-time updates
+        refetchInterval: 1000, // Refetch every 5 seconds for real-time updates
     });
 };
 
@@ -49,6 +49,6 @@ export const useRecentImage = (token) => {
         },
         enabled: !!token,
         refetchInterval: 1000, // Refetch every 5 seconds for real-time updates
-        staleTime: 0, // Always consider data stale to ensure fresh images
+        // staleTime: 0, // Always consider data stale to ensure fresh images
     });
 };

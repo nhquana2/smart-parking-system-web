@@ -1,4 +1,5 @@
 #include <WiFi.h>
+#include<WiFiManager.h>
 #include <PubSubClient.h>
 #include <SPI.h>
 #include <MFRC522.h>
@@ -39,7 +40,7 @@ PubSubClient  mqtt(net);
 
 enum State { IDLE, WAIT_TAP, WAIT_ANPR, WAIT_VEHICLE } state = IDLE;
 String lastUID, inOutType, licensePlate;
-const char* ANPR_URL = "http://192.168.1.31:8080/plate/recognize";
+char ANPR_URL[96] = "http://192.168.1.31:8080/plate/recognize";
 
 // forward declarations
 void connectMQTT();
@@ -116,7 +117,22 @@ void setup() {
   s->set_framesize(s, FRAMESIZE_VGA); 
 
   // WiFi init
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  //WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  WiFiManager wfm;
+  //wfm.setDebugOutput(false);
+  wfm.resetSettings();
+  WiFiManagerParameter custom_text_box("mqtt_broker_ip", "Enter MQTT Broker IP", "192.168.0.1", 50);
+  wfm.addParameter(&custom_text_box);
+
+  bool res = wfm.autoConnect("ESP32CAM", "23clc01hcmus");
+
+  if (!res) {
+    Serial.println("failed to connect and hit timeout");
+    ESP.restart();
+    delay(1000);
+  }
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(200);
     Serial.print(".");
@@ -124,12 +140,14 @@ void setup() {
   Serial.println("\nWiFi connected");
 
   // MQTT init
-  mqtt.setServer(MQTT_BROKER, MQTT_PORT);
+  mqtt.setServer(custom_text_box.getValue(), MQTT_PORT);
   mqtt.setCallback(mqttCallback);
   connectMQTT();
   mqtt.subscribe(TOPIC_RFID_TAP_STATUS);
   mqtt.subscribe(TOPIC_VEHICLE_IN_STATUS);
   mqtt.subscribe(TOPIC_VEHICLE_OUT_STATUS);
+
+  snprintf(ANPR_URL, sizeof(ANPR_URL), "http://%s:8080/plate/recognize", custom_text_box.getValue());
 }
 
 void loop() {

@@ -4,6 +4,8 @@
 #include <PubSubClient.h>
 #include <ArduinoJson.h>
 #include <Servo.h>
+#include <WiFiManager.h>
+
 const char* WIFI_SSID     = "TrustHome Tang 6";
 const char* WIFI_PASSWORD = "trusthome";
 const char* MQTT_BROKER   = "192.168.1.31";
@@ -132,10 +134,25 @@ void setup() {
   digitalWrite(BUZZER_PIN, LOW);
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  
+  WiFiManager wfm;
+  //wfm.setDebugOutput(false);
+  wfm.resetSettings();
+  WiFiManagerParameter custom_text_box("mqtt_broker_ip", "Enter MQTT Broker IP", "192.168.0.1", 50);
+  wfm.addParameter(&custom_text_box);
+
+  bool res = wfm.autoConnect("ESP8266", "23clc01hcmus");
+
+  if (!res) {
+    Serial.println("failed to connect and hit timeout");
+    ESP.restart();
+    delay(1000);
+  }
+
   while (WiFi.status() != WL_CONNECTED) delay(250);
 
-  mqtt.setServer(MQTT_BROKER, MQTT_PORT);
+  //mqtt.setServer(MQTT_BROKER, MQTT_PORT);
+  mqtt.setServer(custom_text_box.getValue(), MQTT_PORT);
   mqtt.setCallback(mqttCallback);
 
   printLCDReady();

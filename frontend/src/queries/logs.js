@@ -21,6 +21,7 @@ export function useLogs(token, type = null) {
             return response.json();
         },
         enabled: !!token,
+        refetchInterval: 1000,
     });
 }
 
