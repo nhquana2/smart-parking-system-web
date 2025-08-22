@@ -49,6 +49,7 @@ export const useRecentImage = (token) => {
         },
         enabled: !!token,
         refetchInterval: 1000, // Refetch every 5 seconds for real-time updates
-        // staleTime: 0, // Always consider data stale to ensure fresh images
+        staleTime: 0, // Always consider data stale to ensure fresh images
+        cacheTime: 0, // Don't cache the result
     });
 };

@@ -56,8 +56,14 @@ async def get_recent_image():
     if not os.path.exists(IMAGE_PATH):
         raise HTTPException(status_code=404, detail="No recent image found")
     
-    return FileResponse(
+    response = FileResponse(
         path=IMAGE_PATH,
         media_type="image/jpeg",
         filename="most_recent_image.jpg"
     )
+
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+
+    return response
