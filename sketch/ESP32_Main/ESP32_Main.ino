@@ -260,6 +260,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int len) {
       publishServoClose();
       
     }
+    delay(2000); // Avoid double tap
     resetState();
   }
 }
